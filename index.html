@@ -9,14 +9,31 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #090d16; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 8px; }
-        .game-card { background: linear-gradient(145deg, #121929, #0d121d); border-radius: 16px; width: 100%; max-width: 480px; padding: 14px; box-shadow: 0 12px 30px rgba(0,0,0,0.7); border: 1px solid #1f293d; position: relative; }
+        
+        /* Contenedor Auth */
+        #authScreen { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; max-width: 400px; background: linear-gradient(145deg, #121929, #0d121d); padding: 24px; border-radius: 16px; border: 1px solid #1f293d; box-shadow: 0 12px 30px rgba(0,0,0,0.7); }
+        .auth-title { font-size: 20px; font-weight: 900; color: #ff334b; margin-bottom: 16px; text-transform: uppercase; text-align: center; }
+        .auth-form { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+        .auth-input { width: 100%; background: #161f33; border: 1px solid #2b3752; color: #fff; padding: 10px; border-radius: 8px; font-size: 13px; outline: none; }
+        .auth-btn { width: 100%; padding: 12px; background: #00ff88; color: #070a10; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 13px; margin-top: 6px; box-shadow: 0 4px 12px rgba(0,255,136,0.3); }
+        .auth-switch { font-size: 11px; color: #94a3b8; text-align: center; margin-top: 10px; cursor: pointer; }
+        .auth-switch span { color: #3b82f6; font-weight: bold; }
+
+        /* Juego Principal */
+        #gameScreen { display: none; width: 100%; max-width: 480px; }
+        .game-card { background: linear-gradient(145deg, #121929, #0d121d); border-radius: 16px; width: 100%; padding: 14px; box-shadow: 0 12px 30px rgba(0,0,0,0.7); border: 1px solid #1f293d; position: relative; }
         
         /* Header Casino */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #1f293d; padding-bottom: 8px; }
-        .title { font-size: 16px; font-weight: 900; color: #ff334b; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; text-shadow: 0 0 10px rgba(255,51,75,0.4); cursor: pointer; }
-        .balance { background: #070a10; padding: 6px 12px; border-radius: 20px; font-weight: bold; color: #00ff88; border: 1px solid #00ff8844; font-size: 13px; box-shadow: inset 0 0 8px rgba(0,255,136,0.1); }
-        
-        /* Historial de Burbujas */
+        .title { font-size: 15px; font-weight: 900; color: #ff334b; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        .user-info { display: flex; flex-direction: column; align-items: flex-end; }
+        .balance { background: #070a10; padding: 4px 10px; border-radius: 15px; font-weight: bold; color: #00ff88; border: 1px solid #00ff8844; font-size: 12px; }
+        .user-id-tag { font-size: 9px; color: #94a3b8; margin-top: 2px; }
+
+        /* Controles de Audio */
+        .audio-btn { background: #161f33; border: 1px solid #2b3752; color: #fff; padding: 4px 8px; border-radius: 12px; font-size: 10px; cursor: pointer; font-weight: bold; }
+
+        /* Historial */
         .history { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 10px; padding-bottom: 4px; scrollbar-width: none; }
         .history::-webkit-scrollbar { display: none; }
         .history-item { background: #1a2338; padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: bold; white-space: nowrap; border: 1px solid #2b3752; }
@@ -47,7 +64,7 @@
         .flying { color: #fff; }
         .cashed { color: #00ff88; }
 
-        /* Panel de Doble Apuesta */
+        /* Panel Apuestas */
         .bets-container { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
         .bet-panel { background: #0d121d; border: 1px solid #1f293d; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
         .bet-row { display: flex; gap: 8px; align-items: center; }
@@ -62,14 +79,14 @@
         .btn-disabled { background: #2b3752; color: #64748b; cursor: not-allowed; box-shadow: none; }
 
         .actions-row { display: flex; gap: 8px; }
-        .btn-deposit { flex: 1; padding: 10px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 11px; box-shadow: 0 4px 15px rgba(37,99,235,0.4); }
-        .btn-withdraw { flex: 1; padding: 10px; background: linear-gradient(135deg, #059669, #047857); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 11px; box-shadow: 0 4px 15px rgba(5,150,105,0.4); }
+        .btn-deposit { flex: 1; padding: 10px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 11px; }
+        .btn-withdraw { flex: 1; padding: 10px; background: linear-gradient(135deg, #059669, #047857); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 11px; }
+        .btn-logout { width: 100%; padding: 6px; background: #ef444422; border: 1px solid #ef4444; color: #ef4444; border-radius: 6px; font-size: 10px; font-weight: bold; cursor: pointer; margin-top: 6px; text-transform: uppercase; }
 
         /* Modales */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
         .modal-content { background: #121929; padding: 18px; border-radius: 12px; width: 100%; max-width: 400px; border: 1px solid #2b3752; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; }
-
-        /* Panel Admin Specific */
+        
         .admin-card { background: #090d16; border: 1px solid #ef4444; border-radius: 8px; padding: 10px; margin-bottom: 10px; text-align: left; font-size: 11px; }
         .admin-stat { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #1a2338; }
         .admin-stat-val { font-weight: bold; color: #00ff88; }
@@ -78,68 +95,93 @@
 </head>
 <body>
 
-<div class="game-card">
-    <div class="header">
-        <div class="title" onclick="triggerAdminAccess()">✈️ Aviator Casino</div>
-        <div class="balance">Saldo: $<span id="balance">100.00</span></div>
-    </div>
-
-    <div class="history" id="history"></div>
-
-    <div class="screen">
-        <canvas id="canvas"></canvas>
-        <img id="floatingAvatar" class="plane-avatar" src="icon-256.png" alt="Aviador">
-        
-        <div class="multiplier-overlay">
-            <div class="mult-text flying" id="multDisplay">1.00x</div>
-            <div class="status-text" id="statusDisplay">Esperando ronda...</div>
+<!-- Pantalla Auth -->
+<div id="authScreen">
+    <div class="auth-title" id="authTitle">✈️ Aviator Cuba - Login</div>
+    <div class="auth-form" id="authFormContainer">
+        <div id="registerFields" style="display:none; flex-direction:column; gap:10px;">
+            <input type="text" id="regName" class="auth-input" placeholder="Nombre completo">
+            <input type="text" id="regCI" class="auth-input" maxlength="11" placeholder="Carnet de Identidad (11 dígitos)">
+            <input type="tel" id="regPhone" class="auth-input" placeholder="Número de teléfono (+53...)">
         </div>
+        <input type="text" id="authCI" class="auth-input" maxlength="11" placeholder="Ingresa tu Carnet de Identidad (CI)">
+        <button class="auth-btn" id="authSubmitBtn" onclick="handleAuth()">Iniciar Sesión</button>
     </div>
-
-    <!-- Panel de Doble Apuesta -->
-    <div class="bets-container">
-        <!-- Apuesta 1 -->
-        <div class="bet-panel">
-            <div class="bet-row">
-                <div class="input-group">
-                    <label>Apuesta 1 ($)</label>
-                    <input type="number" id="bet1Amount" value="5" min="1" step="1">
-                </div>
-                <div class="input-group">
-                    <label>Auto Cobro</label>
-                    <input type="number" id="auto1" value="2.00" min="1.01" step="0.1">
-                </div>
-            </div>
-            <button id="btn1" class="btn-action btn-bet-1" onclick="handleBet(1)">APOSTAR 1</button>
-        </div>
-
-        <!-- Apuesta 2 -->
-        <div class="bet-panel">
-            <div class="bet-row">
-                <div class="input-group">
-                    <label>Apuesta 2 ($)</label>
-                    <input type="number" id="bet2Amount" value="5" min="1" step="1">
-                </div>
-                <div class="input-group">
-                    <label>Auto Cobro</label>
-                    <input type="number" id="auto2" value="5.00" min="1.01" step="0.1">
-                </div>
-            </div>
-            <button id="btn2" class="btn-action btn-bet-2" onclick="handleBet(2)">APOSTAR 2</button>
-        </div>
-    </div>
-
-    <div class="actions-row">
-        <button onclick="openCubaDepositModal()" class="btn-deposit">💳 DEPOSITAR</button>
-        <button onclick="openWithdrawModal()" class="btn-withdraw">🏧 RETIRAR</button>
+    <div class="auth-switch" onclick="toggleAuthMode()">
+        ¿No tienes cuenta? <span id="switchText">Regístrate aquí</span>
     </div>
 </div>
 
-<!-- Modal de Depósito -->
+<!-- Juego Principal -->
+<div id="gameScreen">
+    <div class="game-card">
+        <div class="header">
+            <div class="title" onclick="triggerAdminAccess()">✈️ Aviator Cuba</div>
+            <div class="user-info">
+                <div style="display:flex; gap:6px; align-items:center; margin-bottom:3px;">
+                    <button class="audio-btn" id="musicToggleBtn" onclick="toggleMusic()">🎷 Jazz: ON</button>
+                    <div class="balance">Saldo: $<span id="balance">100.00</span></div>
+                </div>
+                <div class="user-id-tag" id="userIdTag">ID: -</div>
+            </div>
+        </div>
+
+        <div class="history" id="history"></div>
+
+        <div class="screen">
+            <canvas id="canvas"></canvas>
+            <img id="floatingAvatar" class="plane-avatar" src="icon-256.png" alt="Aviador">
+            
+            <div class="multiplier-overlay">
+                <div class="mult-text flying" id="multDisplay">1.00x</div>
+                <div class="status-text" id="statusDisplay">Esperando ronda...</div>
+            </div>
+        </div>
+
+        <!-- Panel de Doble Apuesta -->
+        <div class="bets-container">
+            <div class="bet-panel">
+                <div class="bet-row">
+                    <div class="input-group">
+                        <label>Apuesta 1 ($)</label>
+                        <input type="number" id="bet1Amount" value="5" min="1" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label>Auto Cobro</label>
+                        <input type="number" id="auto1" value="2.00" min="1.01" step="0.1">
+                    </div>
+                </div>
+                <button id="btn1" class="btn-action btn-bet-1" onclick="handleBet(1)">APOSTAR 1</button>
+            </div>
+
+            <div class="bet-panel">
+                <div class="bet-row">
+                    <div class="input-group">
+                        <label>Apuesta 2 ($)</label>
+                        <input type="number" id="bet2Amount" value="5" min="1" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label>Auto Cobro</label>
+                        <input type="number" id="auto2" value="5.00" min="1.01" step="0.1">
+                    </div>
+                </div>
+                <button id="btn2" class="btn-action btn-bet-2" onclick="handleBet(2)">APOSTAR 2</button>
+            </div>
+        </div>
+
+        <div class="actions-row">
+            <button onclick="openCubaDepositModal()" class="btn-deposit">💳 DEPOSITAR</button>
+            <button onclick="openWithdrawModal()" class="btn-withdraw">🏧 RETIRAR</button>
+        </div>
+        <button onclick="logout()" class="btn-logout">Cerrar Sesión / Cambiar Perfil</button>
+    </div>
+</div>
+
+<!-- Modal Depósito -->
 <div id="cubaDepositModal" class="modal-overlay">
     <div class="modal-content">
         <h3 style="margin-bottom: 10px; color: #fff; font-size: 15px;">📱 Depósito Móvil</h3>
-        <p style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">Transfiere a nuestra tarjeta de reserva y pega el SMS.</p>
+        <p style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">Transfiere a la tarjeta de reserva e ingresa el SMS.</p>
         
         <div style="margin-bottom: 8px; text-align: left;">
             <label style="font-size: 10px; color: #94a3b8; font-weight: 600;">Método:</label>
@@ -164,11 +206,11 @@
     </div>
 </div>
 
-<!-- Modal de Retiro -->
+<!-- Modal Retiro -->
 <div id="withdrawModal" class="modal-overlay">
     <div class="modal-content">
         <h3 style="margin-bottom: 10px; color: #fff; font-size: 15px;">🏧 Solicitar Retiro</h3>
-        <p style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">Ingresa tus datos para recibir la transferencia.</p>
+        <p style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">Tus fondos se enviarán a tu tarjeta asociada.</p>
 
         <div style="margin-bottom: 8px; text-align: left;">
             <label style="font-size: 10px; color: #94a3b8; font-weight: 600;">Número de Tarjeta (16 dígitos):</label>
@@ -187,10 +229,10 @@
     </div>
 </div>
 
-<!-- PANEL DE ADMINISTRACIÓN / BACKOFFICE -->
+<!-- Panel de Administración -->
 <div id="adminModal" class="modal-overlay">
     <div class="modal-content">
-        <h3 style="margin-bottom: 10px; color: #ef4444; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 6px;">⚙️ PANEL DE CONTROL CASA DE APUESTAS</h3>
+        <h3 style="margin-bottom: 10px; color: #ef4444; font-size: 15px;">⚙️ PANEL DE CONTROL CASA</h3>
         
         <div class="admin-card">
             <div class="admin-stat"><span>Reserva Banco Real:</span><span class="admin-stat-val" id="admReserve">$1,000.00</span></div>
@@ -200,20 +242,12 @@
         </div>
 
         <div style="margin-bottom: 10px; text-align: left;">
-            <label style="font-size: 10px; color: #94a3b8; font-weight: 600;">Margen de la Casa (Dificultad RTP):</label>
+            <label style="font-size: 10px; color: #94a3b8; font-weight: 600;">Margen de la Casa (RTP):</label>
             <select id="rtpMode" onchange="changeRTP()" style="width: 100%; padding: 6px; background: #090d16; border: 1px solid #ef4444; color: #fff; border-radius: 6px; font-size: 11px; margin-top: 3px;">
-                <option value="0.97">Normal (RTP 97% - Estándar)</option>
-                <option value="0.90">Modo Alta Ganancia Casino (RTP 90%)</option>
-                <option value="0.99">Modo Promoción / Fácil (RTP 99%)</option>
+                <option value="0.97">Normal (RTP 97%)</option>
+                <option value="0.90">Modo Casino (RTP 90%)</option>
+                <option value="0.99">Modo Fácil (RTP 99%)</option>
             </select>
-        </div>
-
-        <div style="margin-bottom: 10px; text-align: left;">
-            <label style="font-size: 10px; color: #94a3b8; font-weight: 600;">Editar Saldo del Jugador ($):</label>
-            <div style="display: flex; gap: 6px; margin-top: 3px;">
-                <input type="number" id="admPlayerBalance" placeholder="Nuevo saldo..." style="flex: 1; padding: 6px; background: #090d16; border: 1px solid #2b3752; color: #fff; border-radius: 6px; font-size: 11px;">
-                <button onclick="updatePlayerBalance()" style="padding: 6px 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 11px;">Set</button>
-            </div>
         </div>
 
         <h4 style="font-size: 12px; color: #94a3b8; margin: 10px 0 6px 0; text-align: left;">Solicitudes de Retiro Pendientes:</h4>
@@ -226,8 +260,261 @@
 </div>
 
 <script>
-    // Variables globales
-    let balance = 100.00;
+    // SINTETIZADOR WEB AUDIO API - ESTILO JAZZ CASINO LOUNGE
+    let audioCtx = null;
+    let musicEnabled = true;
+    let bgMusicInterval = null;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    // EFECTO 1: Despegue / Inicio de Ronda
+    function playStartSFX() {
+        if (!musicEnabled) return;
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(500, audioCtx.currentTime + 0.8);
+
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.8);
+    }
+
+    // EFECTO 2: Cobro / Victoria (Cashout)
+    function playWinSFX() {
+        if (!musicEnabled) return;
+        initAudio();
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.08);
+
+            gain.gain.setValueAtTime(0.35, audioCtx.currentTime + idx * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.08 + 0.3);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(audioCtx.currentTime + idx * 0.08);
+            osc.stop(audioCtx.currentTime + idx * 0.08 + 0.3);
+        });
+    }
+
+    // EFECTO 3: Crash (Solo si el jugador tenía apuesta activa sin cobrar)
+    function playCrashSFX() {
+        if (!musicEnabled) return;
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.4);
+
+        gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.4);
+    }
+
+    // MÚSICA DE FONDO JAZZ CASINO (Progresión de Acordes de Jazz II-V-I)
+    // Acordes Jazz de Casino: Dm7 -> G7 -> Cmaj7 -> A7
+    const jazzChords = [
+        [293.66, 349.23, 440.00, 523.25], // Dm7
+        [196.00, 246.94, 293.66, 349.23], // G7
+        [261.63, 329.63, 392.00, 493.88], // Cmaj7
+        [220.00, 277.18, 329.63, 392.00]  // A7
+    ];
+    const jazzBassLine = [146.83, 196.00, 130.81, 110.00];
+    let jazzStep = 0;
+
+    function playJazzBeat() {
+        if (!musicEnabled || !audioCtx) return;
+
+        const now = audioCtx.currentTime;
+
+        // 1. Contrabajo de Jazz (Walking Bass en frecuencias suaves)
+        const bassOsc = audioCtx.createOscillator();
+        const bassGain = audioCtx.createGain();
+        bassOsc.type = 'sine';
+        bassOsc.frequency.setValueAtTime(jazzBassLine[jazzStep % 4], now);
+
+        bassGain.gain.setValueAtTime(0.25, now);
+        bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+        bassOsc.connect(bassGain);
+        gainNode = bassGain;
+        bassGain.connect(audioCtx.destination);
+        bassOsc.start(now);
+        bassOsc.stop(now + 0.5);
+
+        // 2. Acorde de Piano Jazz suave
+        const currentChord = jazzChords[jazzStep % 4];
+        currentChord.forEach(freq => {
+            const chordOsc = audioCtx.createOscillator();
+            const chordGain = audioCtx.createGain();
+            chordOsc.type = 'triangle';
+            chordOsc.frequency.setValueAtTime(freq, now);
+
+            chordGain.gain.setValueAtTime(0.08, now); // Volumen de casino muy agradable y relajante
+            chordGain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+            chordOsc.connect(chordGain);
+            chordGain.connect(audioCtx.destination);
+            chordOsc.start(now);
+            chordOsc.stop(now + 0.45);
+        });
+
+        jazzStep = (jazzStep + 1) % 4;
+    }
+
+    function startBgMusic() {
+        if (bgMusicInterval) clearInterval(bgMusicInterval);
+        // Tempo relajado de Jazz Casino (~550ms por acorde)
+        bgMusicInterval = setInterval(playJazzBeat, 550);
+    }
+
+    function toggleMusic() {
+        musicEnabled = !musicEnabled;
+        const btn = document.getElementById('musicToggleBtn');
+        if (musicEnabled) {
+            btn.textContent = '🎷 Jazz: ON';
+            initAudio();
+            startBgMusic();
+        } else {
+            btn.textContent = '🔇 Audio: OFF';
+            if (bgMusicInterval) clearInterval(bgMusicInterval);
+        }
+    }
+
+    // Autenticación y Gestión de Usuarios
+    let isRegistering = false;
+    let currentUser = null;
+
+    function toggleAuthMode() {
+        isRegistering = !isRegistering;
+        const regFields = document.getElementById('registerFields');
+        const title = document.getElementById('authTitle');
+        const btn = document.getElementById('authSubmitBtn');
+        const switchText = document.getElementById('switchText');
+
+        if (isRegistering) {
+            regFields.style.display = 'flex';
+            title.textContent = '✈️ Aviator Cuba - Registro';
+            btn.textContent = 'Crear Cuenta';
+            switchText.textContent = '¿Ya tienes cuenta? Inicia sesión';
+        } else {
+            regFields.style.display = 'none';
+            title.textContent = '✈️ Aviator Cuba - Login';
+            btn.textContent = 'Iniciar Sesión';
+            switchText.textContent = 'Regístrate aquí';
+        }
+    }
+
+    function handleAuth() {
+        initAudio();
+        const ci = document.getElementById('authCI').value.trim();
+        if (ci.length !== 11) {
+            alert('Por favor, introduce un Carnet de Identidad (CI) válido de 11 dígitos.');
+            return;
+        }
+
+        let users = JSON.parse(localStorage.getItem('aviator_users') || '{}');
+
+        if (isRegistering) {
+            const name = document.getElementById('regName').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+
+            if (!name || !phone) {
+                alert('Por favor, completa todos los campos de registro.');
+                return;
+            }
+
+            if (users[ci]) {
+                alert('Este CI ya se encuentra registrado. Inicia sesión directamente.');
+                return;
+            }
+
+            const newId = 'CUB-' + Math.floor(100000 + Math.random() * 900000);
+            users[ci] = {
+                name: name,
+                ci: ci,
+                phone: phone,
+                pageId: newId,
+                balance: 100.00
+            };
+
+            localStorage.setItem('aviator_users', JSON.stringify(users));
+            alert('¡Cuenta creada con éxito! Se te han acreditado $100.00 de bono inicial.');
+        }
+
+        if (!users[ci]) {
+            alert('Usuario no encontrado. Regístrate primero.');
+            return;
+        }
+
+        currentUser = users[ci];
+        localStorage.setItem('aviator_current_user', JSON.stringify(currentUser));
+        loadUserSession();
+    }
+
+    function loadUserSession() {
+        const saved = localStorage.getItem('aviator_current_user');
+        if (saved) {
+            currentUser = JSON.parse(saved);
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            document.getElementById('balance').textContent = currentUser.balance.toFixed(2);
+            document.getElementById('userIdTag').textContent = `ID: ${currentUser.pageId} | ${currentUser.name}`;
+            resizeCanvas();
+            startBgMusic();
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('aviator_current_user');
+        currentUser = null;
+        if (bgMusicInterval) clearInterval(bgMusicInterval);
+        document.getElementById('gameScreen').style.display = 'none';
+        document.getElementById('authScreen').style.display = 'flex';
+    }
+
+    function saveUserBalance() {
+        if (!currentUser) return;
+        let users = JSON.parse(localStorage.getItem('aviator_users') || '{}');
+        users[currentUser.ci] = currentUser;
+        localStorage.setItem('aviator_users', JSON.stringify(users));
+        localStorage.setItem('aviator_current_user', JSON.stringify(currentUser));
+        document.getElementById('balance').textContent = currentUser.balance.toFixed(2);
+    }
+
+    window.addEventListener('load', () => {
+        if (localStorage.getItem('aviator_current_user')) {
+            loadUserSession();
+        }
+    });
+
+    document.addEventListener('click', () => {
+        initAudio();
+    }, { once: true });
+
+    // Lógica del Juego
     let currentMultiplier = 1.00;
     let crashMultiplier = 1.00;
     let isPlaying = false;
@@ -236,7 +523,6 @@
     let startTime = 0;
     let rtpSetting = 0.97;
 
-    // Estado de la Casa de Apuestas / Reserva
     let casinoStats = {
         reserve: 1000.00,
         profit: 0.00,
@@ -249,7 +535,6 @@
     let bet1 = { active: false, cashed: false, amount: 0 };
     let bet2 = { active: false, cashed: false, amount: 0 };
 
-    // Elementos DOM
     const balanceEl = document.getElementById('balance');
     const multDisplay = document.getElementById('multDisplay');
     const statusDisplay = document.getElementById('statusDisplay');
@@ -265,11 +550,11 @@
     const floatingAvatar = document.getElementById('floatingAvatar');
 
     function resizeCanvas() {
+        if (!canvas.parentElement) return;
         canvas.width = canvas.parentElement.clientWidth;
         canvas.height = canvas.parentElement.clientHeight;
     }
     window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
 
     function generateCrashPoint() {
         const e = Math.random();
@@ -315,23 +600,23 @@
     }
 
     function handleBet(id) {
+        initAudio();
         const input = id === 1 ? bet1Input : bet2Input;
         const btn = id === 1 ? btn1 : btn2;
         const bObj = id === 1 ? bet1 : bet2;
 
         if (!roundActive) {
             const val = parseFloat(input.value);
-            if (isNaN(val) || val <= 0 || val > balance) {
+            if (isNaN(val) || val <= 0 || val > currentUser.balance) {
                 alert('Monto inválido o saldo insuficiente.');
                 return;
             }
             bObj.amount = val;
             bObj.active = true;
             bObj.cashed = false;
-            balance -= val;
-            balanceEl.textContent = balance.toFixed(2);
+            currentUser.balance -= val;
+            saveUserBalance();
 
-            // Acreditar a las ganancias estimadas del casino
             casinoStats.profit += val;
 
             btn.textContent = 'CANCELAR';
@@ -353,6 +638,8 @@
         currentMultiplier = 1.00;
         crashMultiplier = generateCrashPoint();
         startTime = 0;
+
+        playStartSFX();
 
         statusDisplay.textContent = '¡En vuelo!';
         multDisplay.className = 'mult-text flying';
@@ -378,10 +665,11 @@
         bObj.cashed = true;
         bObj.active = false;
         const winAmount = bObj.amount * currentMultiplier;
-        balance += winAmount;
-        balanceEl.textContent = balance.toFixed(2);
+        currentUser.balance += winAmount;
+        saveUserBalance();
 
-        // Descontar pago de premio de la ganancia del casino
+        playWinSFX();
+
         casinoStats.profit -= (winAmount - bObj.amount);
 
         btn.textContent = `¡GANADO $${winAmount.toFixed(1)}!`;
@@ -419,6 +707,12 @@
         roundActive = false;
         isPlaying = false;
         cancelAnimationFrame(animationFrame);
+
+        // CONDICIONAL DE PÉRDIDA: Solo suena si el jugador tenía una apuesta activa y no cobró
+        const playerLost = (bet1.active && !bet1.cashed) || (bet2.active && !bet2.cashed);
+        if (playerLost) {
+            playCrashSFX();
+        }
 
         multDisplay.textContent = crashMultiplier.toFixed(2) + 'x';
         multDisplay.className = 'mult-text crashed';
@@ -474,7 +768,6 @@
         }
     }
 
-    // Modal Helpers
     function openCubaDepositModal() { document.getElementById('cubaDepositModal').style.display = 'flex'; }
     function openWithdrawModal() { document.getElementById('withdrawModal').style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
@@ -488,14 +781,13 @@
         const extractedAmount = amountMatch ? parseFloat(amountMatch[1].replace(/[,]/g, '')) : 500;
 
         const creditsToAdd = extractedAmount / 5;
-        balance += creditsToAdd;
-        balanceEl.textContent = balance.toFixed(2);
+        currentUser.balance += creditsToAdd;
+        saveUserBalance();
 
-        // Actualizar métricas del Casino
         casinoStats.reserve += creditsToAdd;
         casinoStats.totalDeposited += creditsToAdd;
 
-        alert(`¡Pago Validado!\nImporte: ${extractedAmount} CUP\nCréditos acreditados: +$${creditsToAdd.toFixed(2)}`);
+        alert(`¡Pago Validado para ${currentUser.name}!\nCréditos acreditados: +$${creditsToAdd.toFixed(2)}`);
         document.getElementById('smsText').value = '';
         closeModal('cubaDepositModal');
     }
@@ -504,22 +796,21 @@
         const card = document.getElementById('withdrawCard').value.trim();
         const amount = parseFloat(document.getElementById('withdrawAmount').value);
 
-        if (card.length < 15 || isNaN(amount) || amount > balance || amount <= 0) {
+        if (card.length < 15 || isNaN(amount) || amount > currentUser.balance || amount <= 0) {
             alert('Número de tarjeta inválido o saldo insuficiente.');
             return;
         }
 
-        balance -= amount;
-        balanceEl.textContent = balance.toFixed(2);
+        currentUser.balance -= amount;
+        saveUserBalance();
 
-        pendingWithdraws.push({ id: Date.now(), card, amount });
-        alert(`Solicitud de retiro enviada por $${amount.toFixed(2)}. Será procesada a la tarjeta ${card}.`);
+        pendingWithdraws.push({ id: Date.now(), user: currentUser.name, ci: currentUser.ci, card, amount });
+        alert(`Solicitud de retiro enviada por $${amount.toFixed(2)} a nombre de ${currentUser.name}.`);
         
         document.getElementById('withdrawCard').value = '';
         closeModal('withdrawModal');
     }
 
-    // LÓGICA DEL PANEL DE ADMINISTRACIÓN ACCESIBLE
     let clickCount = 0;
     let clickTimer = null;
     function triggerAdminAccess() {
@@ -543,7 +834,6 @@
         document.getElementById('admProfit').textContent = `$${casinoStats.profit.toFixed(2)}`;
         document.getElementById('admDeposits').textContent = `$${casinoStats.totalDeposited.toFixed(2)}`;
         document.getElementById('admWithdraws').textContent = `$${casinoStats.totalWithdrawn.toFixed(2)}`;
-        document.getElementById('admPlayerBalance').value = balance.toFixed(2);
 
         renderAdminWithdraws();
         document.getElementById('adminModal').style.display = 'flex';
@@ -561,10 +851,10 @@
             const div = document.createElement('div');
             div.className = 'withdraw-item';
             div.innerHTML = `
-                <div><strong>Tarjeta:</strong> ${w.card}</div>
-                <div><strong>Monto:</strong> $${w.amount.toFixed(2)}</div>
+                <div><strong>Usuario:</strong> ${w.user} (CI: ${w.ci})</div>
+                <div><strong>Tarjeta:</strong> ${w.card} | <strong>Monto:</strong> $${w.amount.toFixed(2)}</div>
                 <div style="display:flex; gap: 4px; margin-top: 4px;">
-                    <button onclick="approveWithdraw(${w.id})" style="flex:1; background:#059669; color:white; border:none; padding:4px; border-radius:4px; font-weight:bold;">Aprobar (Pagado)</button>
+                    <button onclick="approveWithdraw(${w.id})" style="flex:1; background:#059669; color:white; border:none; padding:4px; border-radius:4px; font-weight:bold;">Aprobar</button>
                     <button onclick="rejectWithdraw(${w.id})" style="flex:1; background:#ef4444; color:white; border:none; padding:4px; border-radius:4px; font-weight:bold;">Rechazar</button>
                 </div>
             `;
@@ -578,7 +868,7 @@
             casinoStats.reserve -= item.amount;
             casinoStats.totalWithdrawn += item.amount;
             pendingWithdraws = pendingWithdraws.filter(w => w.id !== id);
-            alert(`Retiro aprobado. Se ha descontado $${item.amount.toFixed(2)} de la reserva.`);
+            alert(`Retiro aprobado para ${item.user}.`);
             openAdminPanel();
         }
     }
@@ -586,10 +876,12 @@
     function rejectWithdraw(id) {
         const item = pendingWithdraws.find(w => w.id === id);
         if (item) {
-            balance += item.amount;
-            balanceEl.textContent = balance.toFixed(2);
+            if (currentUser && currentUser.ci === item.ci) {
+                currentUser.balance += item.amount;
+                saveUserBalance();
+            }
             pendingWithdraws = pendingWithdraws.filter(w => w.id !== id);
-            alert(`Retiro rechazado. Se devolvió el saldo al jugador.`);
+            alert(`Retiro rechazado. Fondos devueltos al usuario.`);
             openAdminPanel();
         }
     }
@@ -597,15 +889,6 @@
     function changeRTP() {
         rtpSetting = parseFloat(document.getElementById('rtpMode').value);
         alert(`Dificultad cambiada. Nuevo RTP: ${rtpSetting * 100}%`);
-    }
-
-    function updatePlayerBalance() {
-        const newBal = parseFloat(document.getElementById('admPlayerBalance').value);
-        if (!isNaN(newBal) && newBal >= 0) {
-            balance = newBal;
-            balanceEl.textContent = balance.toFixed(2);
-            alert(`Saldo del jugador actualizado a $${newBal.toFixed(2)}`);
-        }
     }
 
     if ('serviceWorker' in navigator) {
