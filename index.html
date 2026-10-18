@@ -33,12 +33,16 @@
         <div class="header">
             <div class="title" onclick="triggerAdminAccess()">✈️ Aviator Cuba <span class="demo-badge">DEMO</span></div>
             <div class="user-info">
-                <div style="display:flex; gap:6px; align-items:center; margin-bottom:3px;">
+                <div style="display:flex; gap:6px; align-items:center;">
                     <button class="audio-btn" id="musicToggleBtn" onclick="toggleMusic()">🎷 Jazz: ON</button>
+                    <button class="trophy-btn" onclick="openAchievementsModal()" title="Logros">🏆</button>
                     <button class="reset-btn" onclick="resetDemoBalance()" title="Reiniciar Saldo Demo">🔄 $100</button>
                     <div class="balance">Saldo: $<span id="balance">100.00</span></div>
+                    <!-- Círculo de Perfil de Usuario -->
+                    <div class="profile-avatar" id="profileBtn" onclick="openProfileModal()" title="Perfil de Usuario">
+                        <span id="profileInitials">U</span>
+                    </div>
                 </div>
-                <div class="user-id-tag" id="userIdTag">ID: -</div>
             </div>
         </div>
 
@@ -52,6 +56,8 @@
                 <div class="mult-text flying" id="multDisplay">1.00x</div>
                 <div class="status-text" id="statusDisplay">Esperando ronda...</div>
             </div>
+            <!-- Notificaciones Emergentes tipo Toast -->
+            <div id="toastContainer" class="toast-container"></div>
         </div>
 
         <!-- Panel de Doble Apuesta -->
@@ -60,11 +66,11 @@
                 <div class="bet-row">
                     <div class="input-group">
                         <label>Apuesta 1 ($)</label>
-                        <input type="number" id="bet1Amount" value="5" min="1" step="1">
+                        <input type="number" id="bet1Amount" value="20" min="1" step="1">
                     </div>
                     <div class="input-group">
                         <label>Auto Cobro</label>
-                        <input type="number" id="auto1" value="2.00" min="1.01" step="0.1">
+                        <input type="number" id="auto1" value="10.00" min="1.01" step="0.1">
                     </div>
                 </div>
                 <button id="btn1" class="btn-action btn-bet-1" onclick="handleBet(1)">APOSTAR 1</button>
@@ -78,22 +84,42 @@
                     </div>
                     <div class="input-group">
                         <label>Auto Cobro</label>
-                        <input type="number" id="auto2" value="5.00" min="1.01" step="0.1">
+                        <input type="number" id="auto2" value="2.00" min="1.01" step="0.1">
                     </div>
                 </div>
                 <button id="btn2" class="btn-action btn-bet-2" onclick="handleBet(2)">APOSTAR 2</button>
             </div>
         </div>
 
-        <!-- Apuestas en Vivo -->
-        <div class="live-bets-panel">
-            <div class="live-bets-header">
-                <span>Jugador (ID)</span>
-                <span>Multiplicador</span>
-                <span>Ganancia</span>
+        <!-- Pestañas de Apuestas en Vivo / Mis Apuestas -->
+        <div class="tabs-header">
+            <button class="tab-btn active" onclick="switchTab('live')">Apuestas en Vivo</button>
+            <button class="tab-btn" onclick="switchTab('myBets')">Mis Apuestas</button>
+        </div>
+
+        <div id="liveTabContent" class="tab-content active">
+            <div class="live-bets-panel">
+                <div class="live-bets-header">
+                    <span>Jugador (ID)</span>
+                    <span>Multiplicador</span>
+                    <span>Ganancia</span>
+                </div>
+                <div class="live-bets-list" id="liveBetsList">
+                    <div style="font-size:10px; color:#64748b; text-align:center;">Cargando apuestas...</div>
+                </div>
             </div>
-            <div class="live-bets-list" id="liveBetsList">
-                <div style="font-size:10px; color:#64748b; text-align:center;">Cargando apuestas...</div>
+        </div>
+
+        <div id="myBetsTabContent" class="tab-content">
+            <div class="live-bets-panel">
+                <div class="live-bets-header">
+                    <span>Monto</span>
+                    <span>Mult. Retiro</span>
+                    <span>Resultado</span>
+                </div>
+                <div class="live-bets-list" id="myBetsList">
+                    <div style="font-size:10px; color:#64748b; text-align:center;">No tienes apuestas registradas aún.</div>
+                </div>
             </div>
         </div>
 
@@ -109,67 +135,83 @@
                 <button class="chat-send-btn" onclick="sendUserMessage()">Enviar</button>
             </div>
         </div>
-
-        <div class="actions-row">
-            <button onclick="openCubaDepositModal()" class="btn-deposit">💳 DEPOSITAR</button>
-            <button onclick="openWithdrawModal()" class="btn-withdraw">🏧 RETIRAR</button>
-        </div>
-        <button onclick="logout()" class="btn-logout">Cerrar Sesión / Cambiar Perfil</button>
     </div>
 </div>
 
-<!-- Modales -->
+<!-- Modal Perfil de Usuario -->
+<div id="profileModal" class="modal-overlay">
+    <div class="modal-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #1f293d; padding-bottom: 8px;">
+            <h3 style="color: #00ff88; font-size: 16px;">👤 Perfil de Usuario</h3>
+            <button onclick="closeModal('profileModal')" style="background: none; border: none; color: #94a3b8; font-size: 16px; cursor: pointer;">✕</button>
+        </div>
+        
+        <div class="profile-card">
+            <div class="profile-header-info">
+                <div class="profile-avatar-large" id="profileInitialsLarge">U</div>
+                <div style="text-align: left;">
+                    <div id="profName" style="font-weight: bold; font-size: 14px; color: #fff;">-</div>
+                    <div id="profId" style="font-size: 11px; color: #3b82f6;">ID: -</div>
+                </div>
+            </div>
+            
+            <div class="profile-details">
+                <div class="profile-detail-item">
+                    <span>Carnet de Identidad:</span>
+                    <strong id="profCI">-</strong>
+                </div>
+                <div class="profile-detail-item">
+                    <span>Teléfono:</span>
+                    <strong id="profPhone">-</strong>
+                </div>
+                <div class="profile-detail-item">
+                    <span>Saldo Disponible:</span>
+                    <strong id="profBalance" style="color: #00ff88;">$100.00</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions-row" style="margin-top: 12px;">
+            <button onclick="openCubaDepositModalFromProfile()" class="btn-deposit">💳 DEPOSITAR</button>
+            <button onclick="openWithdrawModalFromProfile()" class="btn-withdraw">🏧 RETIRAR</button>
+        </div>
+
+        <button onclick="logout()" class="btn-logout" style="margin-top: 10px;">Cerrar Sesión / Cambiar Perfil</button>
+    </div>
+</div>
+
+<!-- Modal Logros -->
+<div id="achievementsModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 style="color: #eab308; margin-bottom: 10px;">🏆 Logros & Recompensas</h3>
+        <div id="achievementsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; text-align: left;"></div>
+        <button onclick="closeModal('achievementsModal')" style="width: 100%; padding: 8px; background: #475569; color: white; border: none; border-radius: 6px; font-weight: bold;">Cerrar</button>
+    </div>
+</div>
+
+<!-- Modal Depósito Móvil Demo -->
 <div id="cubaDepositModal" class="modal-overlay">
     <div class="modal-content">
         <h3>📱 Depósito Móvil Demo</h3>
-        <p>Transfiere a la tarjeta de reserva e ingresa el SMS.</p>
-        <div style="margin-bottom: 8px; text-align: left;">
-            <label style="font-size: 10px; color: #94a3b8;">Método:</label>
-            <select id="paymentMethod" style="width: 100%; padding: 7px; background: #090d16; border: 1px solid #2b3752; color: #fff; border-radius: 6px; font-size: 12px;">
-                <option value="transfermovil">Transfermóvil (CUP)</option>
-                <option value="clasica">Tarjeta Clásica / BANDEC</option>
-            </select>
-        </div>
-        <div style="background: #090d16; padding: 8px; border-radius: 6px; border: 1px dashed #2b3752; margin-bottom: 8px; font-size: 10px; text-align: left; color: #cbd5e1;">
-            Tarjeta Reserva: <span style="color: #00ff88; font-weight: bold;">9234 5678 9876 5432</span>
-        </div>
-        <textarea id="smsText" placeholder="Pega el SMS de confirmación aquí..." style="width: 100%; height: 50px; padding: 7px; background: #090d16; border: 1px solid #2b3752; color: #fff; border-radius: 6px; font-size: 11px; resize: none;"></textarea>
-        <div style="display: flex; gap: 6px; margin-top: 8px;">
+        <p style="font-size: 11px; color: #94a3b8; margin-top: 4px;">Transfiere a la tarjeta de reserva e ingresa el SMS.</p>
+        <textarea id="smsText" placeholder="Pega el SMS de confirmación aquí..." style="width: 100%; height: 50px; padding: 7px; background: #090d16; border: 1px solid #2b3752; color: #fff; border-radius: 6px; font-size: 11px; resize: none; margin: 8px 0;"></textarea>
+        <div style="display: flex; gap: 6px;">
             <button onclick="processSmsDeposit()" style="flex: 1; padding: 8px; background: #00ff88; color: #070a10; border: none; border-radius: 6px; font-weight: bold;">Validar</button>
             <button onclick="closeModal('cubaDepositModal')" style="flex: 1; padding: 8px; background: #475569; color: white; border: none; border-radius: 6px;">Cancelar</button>
         </div>
     </div>
 </div>
 
+<!-- Modal Retiro Demo -->
 <div id="withdrawModal" class="modal-overlay">
     <div class="modal-content">
         <h3>🏧 Solicitar Retiro Demo</h3>
-        <p>Tus fondos se enviarán a tu tarjeta asociada.</p>
-        <input type="text" id="withdrawCard" placeholder="Número de Tarjeta (16 dígitos)" style="width: 100%; padding: 7px; background: #090d16; border: 1px solid #2b3752; color: #fff; border-radius: 6px; font-size: 12px; margin-bottom: 8px;">
+        <input type="text" id="withdrawCard" placeholder="Número de Tarjeta (16 dígitos)" style="width: 100%; padding: 7px; background: #090d16; border: 1px solid #2b3752; color: #fff; border-radius: 6px; font-size: 12px; margin: 8px 0;">
         <input type="number" id="withdrawAmount" value="20" min="5" style="width: 100%; padding: 7px; background: #090d16; border: 1px solid #2b3752; color: #fff; border-radius: 6px; font-size: 12px; margin-bottom: 10px;">
         <div style="display: flex; gap: 6px;">
             <button onclick="submitWithdraw()" style="flex: 1; padding: 8px; background: #059669; color: white; border: none; border-radius: 6px; font-weight: bold;">Solicitar</button>
             <button onclick="closeModal('withdrawModal')" style="flex: 1; padding: 8px; background: #475569; color: white; border: none; border-radius: 6px;">Cancelar</button>
         </div>
-    </div>
-</div>
-
-<div id="adminModal" class="modal-overlay">
-    <div class="modal-content">
-        <h3 style="color: #ef4444;">⚙️ PANEL DE CONTROL CASA</h3>
-        <div class="admin-card">
-            <div class="admin-stat"><span>Reserva Banco Real:</span><span class="admin-stat-val" id="admReserve">$1,000.00</span></div>
-            <div class="admin-stat"><span>Ganancia Casino (GGR):</span><span class="admin-stat-val" id="admProfit">$0.00</span></div>
-            <div class="admin-stat"><span>Total Depositado:</span><span class="admin-stat-val" id="admDeposits">$0.00</span></div>
-            <div class="admin-stat"><span>Total Retirado:</span><span class="admin-stat-val" id="admWithdraws">$0.00</span></div>
-        </div>
-        <select id="rtpMode" onchange="changeRTP()" style="width: 100%; padding: 6px; background: #090d16; border: 1px solid #ef4444; color: #fff; border-radius: 6px; font-size: 11px; margin-bottom: 10px;">
-            <option value="0.97">Normal (RTP 97%)</option>
-            <option value="0.90">Modo Casino (RTP 90%)</option>
-            <option value="0.99">Modo Fácil (RTP 99%)</option>
-        </select>
-        <div id="adminWithdrawList"></div>
-        <button onclick="closeModal('adminModal')" style="width: 100%; margin-top: 10px; padding: 8px; background: #475569; color: white; border: none; border-radius: 6px;">Cerrar Panel</button>
     </div>
 </div>
 
